@@ -26,7 +26,7 @@ pub fn related_with_params<'a>(
     }
 }
 
-pub fn related<'a>(name: &'a str) -> impl Fn(&str) -> String + 'a {
+pub fn related(name: &str) -> impl Fn(&str) -> String + '_ {
     related_with_params(name, "", Any)
 }
 
@@ -34,7 +34,7 @@ pub fn related_with_usage<'a>(name: &'a str, usage: &'a str) -> impl Fn(&str) ->
     related_with_params(name, usage, Any)
 }
 
-pub fn related_with_gender<'a>(name: &'a str, gender: Gender) -> impl Fn(&str) -> String + 'a {
+pub fn related_with_gender(name: &str, gender: Gender) -> impl Fn(&str) -> String + '_ {
     related_with_params(name, "", gender)
 }
 

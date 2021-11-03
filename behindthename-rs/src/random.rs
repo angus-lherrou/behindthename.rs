@@ -1,12 +1,12 @@
 use crate::constants::RANDOM_JSON_URL;
 use crate::types::{Gender, Gender::*};
 
-pub fn random_with_params<'a>(
+pub fn random_with_params(
     gender: Gender,
-    usage: &'a str,
+    usage: &str,
     number: u8,
     random_surname: bool,
-) -> impl Fn(&str) -> String + 'a {
+) -> impl Fn(&str) -> String + '_ {
     let surname_key = if random_surname { "yes" } else { "no" }.to_string();
 
     let usage_segment = if usage.is_empty() {
@@ -41,7 +41,7 @@ pub fn random_with_gender(gender: Gender) -> impl Fn(&str) -> String {
     random_with_params(gender, "", 1, false)
 }
 
-pub fn random_with_usage<'a>(usage: &'a str) -> impl Fn(&str) -> String + 'a {
+pub fn random_with_usage(usage: &str) -> impl Fn(&str) -> String + '_ {
     random_with_params(Any, usage, 1, false)
 }
 

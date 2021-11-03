@@ -1,6 +1,6 @@
 use crate::constants::LOOKUP_JSON_URL;
 
-fn _lookup<'a>(name: &'a str, exact: bool) -> impl Fn(&str) -> String + 'a {
+fn _lookup(name: &str, exact: bool) -> impl Fn(&str) -> String + '_ {
     let exact_key = if exact { "yes" } else { "no" }.to_string();
     move |key| {
         format!(
@@ -10,11 +10,11 @@ fn _lookup<'a>(name: &'a str, exact: bool) -> impl Fn(&str) -> String + 'a {
     }
 }
 
-pub fn lookup<'a>(name: &'a str) -> impl Fn(&str) -> String + 'a {
+pub fn lookup(name: &str) -> impl Fn(&str) -> String + '_ {
     _lookup(name, false)
 }
 
-pub fn lookup_exact<'a>(name: &'a str) -> impl Fn(&str) -> String + 'a {
+pub fn lookup_exact(name: &str) -> impl Fn(&str) -> String + '_ {
     _lookup(name, true)
 }
 
