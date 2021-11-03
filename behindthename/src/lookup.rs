@@ -1,20 +1,25 @@
 use crate::constants::LOOKUP_JSON_URL;
+use url::Url;
 
-fn _lookup(name: &str, exact: bool) -> impl Fn(&str) -> String + '_ {
-    let exact_key = if exact { "yes" } else { "no" }.to_string();
+fn _lookup(name: &str, exact: bool) -> impl FnOnce(&str) -> String + '_ {
     move |key| {
-        format!(
-            "{}?key={}&name={}&exact={}",
-            LOOKUP_JSON_URL, key, name, exact_key
-        )
+        let mut params: Vec<(&str, &str)> = vec![("key", key), ("name", name)];
+
+        if exact {
+            params.push(("exact", "yes"))
+        }
+
+        Url::parse_with_params(LOOKUP_JSON_URL, params)
+            .unwrap()
+            .to_string()
     }
 }
 
-pub fn lookup(name: &str) -> impl Fn(&str) -> String + '_ {
+pub fn lookup(name: &str) -> impl FnOnce(&str) -> String + '_ {
     _lookup(name, false)
 }
 
-pub fn lookup_exact(name: &str) -> impl Fn(&str) -> String + '_ {
+pub fn lookup_exact(name: &str) -> impl FnOnce(&str) -> String + '_ {
     _lookup(name, true)
 }
 
@@ -36,7 +41,7 @@ mod tests {
         let req = lookup("Angus");
         assert_eq!(
             req("asdf"),
-            "https://www.behindthename.com/api/lookup.json?key=asdf&name=Angus&exact=no"
+            "https://www.behindthename.com/api/lookup.json?key=asdf&name=Angus"
         );
     }
 }

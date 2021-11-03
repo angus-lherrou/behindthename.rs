@@ -1,41 +1,44 @@
 use crate::constants::RELATED_JSON_URL;
 use crate::types::{Gender, Gender::*};
+use url::Url;
 
 pub fn related_with_params<'a>(
     name: &'a str,
-    usage: &'a str,
+    usage: Option<&'a str>,
     gender: Gender,
-) -> impl Fn(&str) -> String + 'a {
-    let usage_segment = if usage.is_empty() {
-        "".to_string()
-    } else {
-        "&usage=".to_owned() + usage
-    };
-
-    let gender_segment = if format!("{}", gender).is_empty() {
-        "".to_string()
-    } else {
-        format!("&gender={}", gender)
-    };
-
+) -> impl FnOnce(&str) -> String + 'a {
     move |key| {
-        format!(
-            "{}?key={}&name={}{}{}",
-            RELATED_JSON_URL, key, name, usage_segment, gender_segment,
-        )
+        let mut params: Vec<(&str, &str)> = vec![("key", key), ("name", name)];
+
+        if let Some(u) = usage {
+            params.push(("usage", u))
+        }
+
+        let gstring: String;
+        match gender {
+            Any => (),
+            g => {
+                gstring = g.to_string();
+                params.push(("gender", &gstring))
+            }
+        }
+
+        Url::parse_with_params(RELATED_JSON_URL, params)
+            .unwrap()
+            .to_string()
     }
 }
 
-pub fn related(name: &str) -> impl Fn(&str) -> String + '_ {
-    related_with_params(name, "", Any)
+pub fn related(name: &str) -> impl FnOnce(&str) -> String + '_ {
+    related_with_params(name, None, Any)
 }
 
-pub fn related_with_usage<'a>(name: &'a str, usage: &'a str) -> impl Fn(&str) -> String + 'a {
-    related_with_params(name, usage, Any)
+pub fn related_with_usage<'a>(name: &'a str, usage: &'a str) -> impl FnOnce(&str) -> String + 'a {
+    related_with_params(name, Some(usage), Any)
 }
 
-pub fn related_with_gender(name: &str, gender: Gender) -> impl Fn(&str) -> String + '_ {
-    related_with_params(name, "", gender)
+pub fn related_with_gender(name: &str, gender: Gender) -> impl FnOnce(&str) -> String + '_ {
+    related_with_params(name, None, gender)
 }
 
 #[cfg(test)]
@@ -86,7 +89,7 @@ mod tests {
 
     #[test]
     fn test_related_with_params() {
-        let req = related_with_params("Sasha", "rus", Male);
+        let req = related_with_params("Sasha", Some("rus"), Male);
         assert_eq!(
             req("asdf"),
             "https://www.behindthename.com/api/related.json?key=asdf&name=Sasha&usage=rus&gender=m"

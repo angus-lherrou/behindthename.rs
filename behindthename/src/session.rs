@@ -58,7 +58,7 @@ impl Session<'_> {
 
     pub fn request(
         &self,
-        req: impl Fn(&str) -> String,
+        req: impl FnOnce(&str) -> String,
     ) -> RateLimited<'_, Response, reqwest::Error> {
         match self.check() {
             Err((i, earliest)) => Limited(i, earliest),
@@ -71,7 +71,7 @@ impl Session<'_> {
 
     pub fn request_json(
         &self,
-        req: impl Fn(&str) -> String,
+        req: impl FnOnce(&str) -> String,
     ) -> RateLimited<'_, JsonResponse, reqwest::Error> {
         match self.request(req) {
             Allowed(resp) => Allowed({

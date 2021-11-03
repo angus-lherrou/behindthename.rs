@@ -24,7 +24,7 @@ fn test_rate_limit() {
     let key = key_string.as_str();
     let sesh = session::Session::new_default(key);
     let req_1 = lookup::lookup("Jordan");
-    let req_2 = random::random_with_params(Male, "ita", 2, true);
+    let req_2 = random::random_with_params(Male, Some("ita"), Some(2), true);
     let req_3 = lookup::lookup("Emily");
     let req_4 = lookup::lookup("Joanne");
 
@@ -81,7 +81,7 @@ fn test_json_random() {
     let key_string = env::var("BTN_API_KEY").unwrap_or_else(|_| "none".to_string());
     let key = key_string.as_str();
     let sesh = session::Session::new_default(key);
-    let req = random::random_with_params(Male, "ita", 2, true);
+    let req = random::random_with_params(Male, Some("ita"), Some(2), true);
 
     match sesh.request_json(req) {
         Allowed(Okay(JsonResponseBody::NameList(e))) => println!("{:?}", e),
@@ -102,7 +102,7 @@ fn test_json_service_unavailable() {
     let key = key_string.as_str();
     let sesh = session::Session::new_default(key);
     let req_1 = lookup::lookup("Jordan");
-    let req_2 = random::random_with_params(Male, "ita", 2, true);
+    let req_2 = random::random_with_params(Male, Some("ita"), Some(2), true);
     let req_3 = lookup::lookup("Emily");
     let req_4 = lookup::lookup("Joanne");
 
