@@ -2,7 +2,7 @@ use std::env;
 use std::thread::sleep;
 use std::time::Duration;
 
-use behindthename_rs::{lookup, random, session, types::*};
+use behindthename::{lookup, random, session, types::*};
 use Gender::*;
 use JsonResponse::*;
 use RateLimited::*;
