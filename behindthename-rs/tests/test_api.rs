@@ -9,15 +9,15 @@ use JsonResponse::*;
 
 #[test]
 fn test_env_session_key() {
-    let key_string = env::var("API_KEY").unwrap_or("none".to_string());
+    let key_string = env::var("BTN_API_KEY").unwrap_or("none".to_string());
     let key = key_string.as_str();
     let sesh = session::Session::new_default(key);
-    assert_eq!(env::var("API_KEY").unwrap_or("none".to_string()), sesh.key)
+    assert_eq!(env::var("BTN_API_KEY").unwrap_or("none".to_string()), sesh.key)
 }
 
 #[test]
 fn test_rate_limit() {
-    let key_string = env::var("API_KEY").unwrap_or("none".to_string());
+    let key_string = env::var("BTN_API_KEY").unwrap_or("none".to_string());
     let key = key_string.as_str();
     let sesh = session::Session::new_default(key);
     let req_1 = lookup::lookup("Jordan");
@@ -49,7 +49,7 @@ fn test_rate_limit() {
 
 #[test]
 fn test_json_lookup() {
-    let key_string = env::var("API_KEY").unwrap_or("none".to_string());
+    let key_string = env::var("BTN_API_KEY").unwrap_or("none".to_string());
     let key = key_string.as_str();
     let sesh = session::Session::new_default(key);
     let req = lookup::lookup("Jordan");
@@ -67,7 +67,7 @@ fn test_json_lookup() {
 
 #[test]
 fn test_json_random() {
-    let key_string = env::var("API_KEY").unwrap_or("none".to_string());
+    let key_string = env::var("BTN_API_KEY").unwrap_or("none".to_string());
     let key = key_string.as_str();
     let sesh = session::Session::new_default(key);
     let req = random::random_with_params(Male, "ita", 2, true);
@@ -85,7 +85,7 @@ fn test_json_random() {
 
 #[test]
 fn test_json_service_unavailable() {
-    let key_string = env::var("API_KEY").unwrap_or("none".to_string());
+    let key_string = env::var("BTN_API_KEY").unwrap_or("none".to_string());
     let key = key_string.as_str();
     let sesh = session::Session::new_default(key);
     let req_1 = lookup::lookup("Jordan");
