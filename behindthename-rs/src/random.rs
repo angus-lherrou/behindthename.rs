@@ -1,20 +1,32 @@
 use crate::constants::RANDOM_JSON_URL;
 use crate::types::{Gender, Gender::*};
 
-
 pub fn random_with_params<'a>(
     gender: Gender,
     usage: &'a str,
     number: u8,
-    random_surname: bool
+    random_surname: bool,
 ) -> impl Fn(&str) -> String + 'a {
     let surname_key = if random_surname { "yes" } else { "no" }.to_string();
-    let usage_segment = if usage.is_empty() { "".to_string() } else { "&usage=".to_owned() + usage };
-    let gender_segment = if format!("{}", gender).is_empty() { "".to_string() } else { format!("&gender={}", gender) };
-    move |key| format!(
-        "{}?key={}{}{}&number={}&randomsurname={}",
-        RANDOM_JSON_URL, key, usage_segment, gender_segment, number, surname_key
-    )
+
+    let usage_segment = if usage.is_empty() {
+        "".to_string()
+    } else {
+        "&usage=".to_owned() + usage
+    };
+
+    let gender_segment = if format!("{}", gender).is_empty() {
+        "".to_string()
+    } else {
+        format!("&gender={}", gender)
+    };
+
+    move |key| {
+        format!(
+            "{}?key={}{}{}&number={}&randomsurname={}",
+            RANDOM_JSON_URL, key, usage_segment, gender_segment, number, surname_key
+        )
+    }
 }
 
 pub fn random() -> impl Fn(&str) -> String {
@@ -33,7 +45,6 @@ pub fn random_with_usage<'a>(usage: &'a str) -> impl Fn(&str) -> String + 'a {
     random_with_params(Any, usage, 1, false)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -41,13 +52,19 @@ mod tests {
     #[test]
     fn test_random() {
         let req = random();
-        assert_eq!(req("asdf"), "https://www.behindthename.com/api/random.json?key=asdf&number=1&randomsurname=no");
+        assert_eq!(
+            req("asdf"),
+            "https://www.behindthename.com/api/random.json?key=asdf&number=1&randomsurname=no"
+        );
     }
 
     #[test]
     fn test_random_with_surname() {
         let req = random_with_surname();
-        assert_eq!(req("asdf"), "https://www.behindthename.com/api/random.json?key=asdf&number=1&randomsurname=yes");
+        assert_eq!(
+            req("asdf"),
+            "https://www.behindthename.com/api/random.json?key=asdf&number=1&randomsurname=yes"
+        );
     }
 
     #[test]
@@ -59,7 +76,10 @@ mod tests {
         let req_neutral = random_with_gender(Neutral);
         assert_eq!(req_neutral("asdf"), "https://www.behindthename.com/api/random.json?key=asdf&gender=mf&number=1&randomsurname=no");
         let req_any = random_with_gender(Any);
-        assert_eq!(req_any("asdf"), "https://www.behindthename.com/api/random.json?key=asdf&number=1&randomsurname=no");
+        assert_eq!(
+            req_any("asdf"),
+            "https://www.behindthename.com/api/random.json?key=asdf&number=1&randomsurname=no"
+        );
     }
 
     #[test]

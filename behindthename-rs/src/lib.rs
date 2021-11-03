@@ -8,6 +8,4 @@ pub mod types;
 mod constants;
 
 #[cfg(test)]
-mod tests {
-
-}
+mod tests {}
