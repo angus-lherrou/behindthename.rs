@@ -19,6 +19,7 @@ fn test_env_session_key() {
 }
 
 #[test]
+#[serial]
 fn test_rate_limit() {
     let key_string = env::var("BTN_API_KEY").unwrap_or_else(|_| "none".to_string());
     let key = key_string.as_str();
@@ -57,6 +58,7 @@ fn test_rate_limit() {
 }
 
 #[test]
+#[serial]
 fn test_json_lookup() {
     let key_string = env::var("BTN_API_KEY").unwrap_or_else(|_| "none".to_string());
     let key = key_string.as_str();
@@ -77,6 +79,7 @@ fn test_json_lookup() {
 }
 
 #[test]
+#[serial]
 fn test_json_random() {
     let key_string = env::var("BTN_API_KEY").unwrap_or_else(|_| "none".to_string());
     let key = key_string.as_str();
@@ -97,6 +100,7 @@ fn test_json_random() {
 }
 
 #[test]
+#[serial]
 fn test_json_service_unavailable() {
     let key_string = env::var("BTN_API_KEY").unwrap_or_else(|_| "none".to_string());
     let key = key_string.as_str();
