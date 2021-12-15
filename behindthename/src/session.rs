@@ -10,7 +10,6 @@ use std::cmp::Ordering;
 use std::fmt::Formatter;
 use std::num::{NonZeroU32, NonZeroU64};
 use std::time::Duration;
-use JsonResponse::*;
 use RateLimited::*;
 
 type DirectRateLimiter = RateLimiter<NotKeyed, InMemoryState, DefaultClock>;
@@ -56,12 +55,12 @@ impl Session<'_> {
         }
     }
 
-    pub fn request(
+    fn request_internal(
         &self,
         req: impl FnOnce(&str) -> String,
-    ) -> RateLimited<'_, Response, reqwest::Error> {
+    ) -> RateLimited<'_, Response, (), reqwest::Error> {
         match self.check() {
-            Err((i, earliest)) => Limited(i, earliest),
+            Err((i, earliest)) => Governed(i, earliest),
             Ok(_) => match self.client.get(req(self.key)).send() {
                 Err(e) => Error(e),
                 Ok(resp) => Allowed(resp),
@@ -69,26 +68,27 @@ impl Session<'_> {
         }
     }
 
-    pub fn request_json(
+    pub fn request(
         &self,
         req: impl FnOnce(&str) -> String,
-    ) -> RateLimited<'_, JsonResponse, reqwest::Error> {
-        match self.request(req) {
-            Allowed(resp) => Allowed({
+    ) -> RateLimited<'_, JsonResponse, NotAvailable, reqwest::Error> {
+        match self.request_internal(req) {
+            Allowed(resp) => {
                 let text = resp.text().unwrap();
                 let text_str = text.as_str();
                 match from_str::<JsonNameDetails>(text_str) {
-                    Ok(jnd) => Okay(JsonResponseBody::NameDetails(jnd)),
+                    Ok(jnd) => Allowed(JsonResponse::NameDetails(jnd)),
                     Err(_) => match from_str::<JsonNameList>(text_str) {
-                        Ok(jnl) => Okay(JsonResponseBody::NameList(jnl)),
-                        Err(_) => match from_str::<JsonNotAvailable>(text_str) {
-                            Ok(e) => NotAvailable(e),
+                        Ok(jnl) => Allowed(JsonResponse::NameList(jnl)),
+                        Err(_) => match from_str::<NotAvailable>(text_str) {
+                            Ok(e) => Limited(e),
                             Err(_) => panic!("Failed to parse {:?} with any branch", text_str),
                         },
                     },
                 }
-            }),
-            Limited(i, n) => Limited(i, n),
+            },
+            Limited(_) => unreachable!(), // we should never generate Limited from the internal request
+            Governed(i, n) => Governed(i, n),
             Error(e) => Error(e),
         }
     }

@@ -34,7 +34,7 @@ impl fmt::Display for Gender {
 }
 
 #[derive(Deserialize)]
-pub struct JsonNotAvailable {
+pub struct NotAvailable {
     pub error_code: usize,
     pub error: String,
 }
@@ -62,20 +62,16 @@ pub struct JsonNameList {
 }
 
 #[derive(Debug)]
-pub enum JsonResponseBody {
+pub enum JsonResponse {
     NameDetails(JsonNameDetails),
     NameList(JsonNameList),
 }
 
-pub enum JsonResponse {
-    Okay(JsonResponseBody),
-    NotAvailable(JsonNotAvailable),
-}
-
 pub(crate) type DefaultInstant = <DefaultClock as Clock>::Instant;
 
-pub enum RateLimited<'a, T, E> {
-    Allowed(T),
-    Limited(&'static str, NotUntil<'a, DefaultInstant>),
+pub enum RateLimited<'a, S, T, E> {
+    Allowed(S),
+    Governed(&'static str, NotUntil<'a, DefaultInstant>),
+    Limited(T),
     Error(E),
 }
