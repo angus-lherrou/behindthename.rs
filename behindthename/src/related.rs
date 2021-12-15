@@ -17,6 +17,11 @@ pub fn related_with_params<'a>(
         let gstring: String;
         match gender {
             Any => (),
+            Neutral => {
+                // This is needed because behindthename's "related" API only recognizes 'mf' as the ambiguous/neutral key
+                gstring = Ambiguous.to_string();
+                params.push(("gender", &gstring))
+            },
             g => {
                 gstring = g.to_string();
                 params.push(("gender", &gstring))
@@ -78,6 +83,11 @@ mod tests {
         let req_neutral = related_with_gender("Jordan", Neutral);
         assert_eq!(
             req_neutral("asdf"),
+            "https://www.behindthename.com/api/related.json?key=asdf&name=Jordan&gender=mf"
+        );
+        let req_ambiguous = related_with_gender("Jordan", Ambiguous);
+        assert_eq!(
+            req_ambiguous("asdf"),
             "https://www.behindthename.com/api/related.json?key=asdf&name=Jordan&gender=mf"
         );
         let req_any = related_with_gender("Jordan", Any);

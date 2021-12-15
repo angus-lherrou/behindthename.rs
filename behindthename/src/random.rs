@@ -18,6 +18,11 @@ pub fn random_with_params(
         let gstring: String;
         match gender {
             Any => (),
+            Ambiguous => {
+                // This is needed because behindthename's "random" API only recognizes 'u' as the ambiguous/neutral key
+                gstring = Neutral.to_string();
+                params.push(("gender", &gstring))
+            },
             g => {
                 gstring = g.to_string();
                 params.push(("gender", &gstring))
@@ -93,7 +98,12 @@ mod tests {
         let req_neutral = random_with_gender(Neutral);
         assert_eq!(
             req_neutral("asdf"),
-            "https://www.behindthename.com/api/random.json?key=asdf&gender=mf"
+            "https://www.behindthename.com/api/random.json?key=asdf&gender=u"
+        );
+        let req_ambiguous = random_with_gender(Ambiguous);
+        assert_eq!(
+            req_ambiguous("asdf"),
+            "https://www.behindthename.com/api/random.json?key=asdf&gender=u"
         );
         let req_any = random_with_gender(Any);
         assert_eq!(

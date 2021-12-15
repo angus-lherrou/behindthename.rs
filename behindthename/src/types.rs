@@ -10,9 +10,11 @@ pub enum Gender {
     Male,
     #[serde(rename = "f")]
     Female,
-    #[serde(rename = "mf")]
+    #[serde(rename = "u")]
     Neutral,
-    Any,
+    #[serde(rename = "mf")]
+    Ambiguous,
+    Any
 }
 
 impl fmt::Display for Gender {
@@ -23,7 +25,8 @@ impl fmt::Display for Gender {
             match *self {
                 Male => "m",
                 Female => "f",
-                Neutral => "mf",
+                Neutral => "u",
+                Ambiguous => "mf",
                 Any => "",
             }
         )
