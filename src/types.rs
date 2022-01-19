@@ -49,7 +49,7 @@ pub struct NotAvailable {
     pub error: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct Usage {
     pub usage_code: String,
     pub usage_full: String,
