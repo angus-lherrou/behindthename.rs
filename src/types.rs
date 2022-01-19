@@ -51,16 +51,16 @@ pub struct NotAvailable {
 
 #[derive(Deserialize, Debug)]
 pub struct Usage {
-    usage_code: String,
-    usage_full: String,
-    usage_gender: Gender,
+    pub usage_code: String,
+    pub usage_full: String,
+    pub usage_gender: Gender,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct JsonNameDetailItem {
-    name: String,
-    gender: String,
-    usages: Vec<Usage>,
+    pub name: String,
+    pub gender: String,
+    pub usages: Vec<Usage>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -68,7 +68,7 @@ pub struct JsonNameDetails(Vec<JsonNameDetailItem>);
 
 #[derive(Deserialize, Debug)]
 pub struct JsonNameList {
-    names: Vec<String>,
+    pub names: Vec<String>,
 }
 
 #[derive(Debug)]

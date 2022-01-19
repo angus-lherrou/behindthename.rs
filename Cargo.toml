@@ -1,6 +1,6 @@
 [package]
 name = "behindthename"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2021"
 license = "MIT"
 description = "Rust bindings for the behindthename.com API"
