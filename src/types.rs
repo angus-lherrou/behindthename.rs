@@ -23,7 +23,7 @@ impl FromStr for Gender {
     type Err = serde_json::error::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        serde_json::from_str::<Gender>(s)
+        serde_json::from_str::<Gender>(format!("\"{}\"", s).as_str())
     }
 }
 
