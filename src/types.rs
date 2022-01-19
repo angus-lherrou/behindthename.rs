@@ -3,6 +3,8 @@ use governor::NotUntil;
 use serde::Deserialize;
 use std::fmt;
 use Gender::*;
+use serde_json;
+use std::str::FromStr;
 
 #[derive(Clone, Copy, Deserialize, Debug)]
 pub enum Gender {
@@ -15,6 +17,14 @@ pub enum Gender {
     #[serde(rename = "mf")]
     Ambiguous,
     Any
+}
+
+impl FromStr for Gender {
+    type Err = serde_json::error::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        serde_json::from_str::<Gender>(s)
+    }
 }
 
 impl fmt::Display for Gender {
