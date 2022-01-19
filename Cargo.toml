@@ -3,9 +3,10 @@ name = "behindthename"
 version = "0.2.0"
 edition = "2021"
 license = "MIT"
-description = "API bindings for behindthename.com"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "Rust bindings for the behindthename.com API"
+homepage = "https://github.com/angus-lherrou/behindthename.rs"
+repository = "https://github.com/angus-lherrou/behindthename.rs"
+readme = "README.md"
 
 [dependencies]
 reqwest = { version = "0.11.6", features = ["blocking", "json"] }
