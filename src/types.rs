@@ -64,7 +64,7 @@ pub struct JsonNameDetailItem {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct JsonNameDetails(Vec<JsonNameDetailItem>);
+pub struct JsonNameDetails(pub Vec<JsonNameDetailItem>);
 
 #[derive(Deserialize, Debug)]
 pub struct JsonNameList {
