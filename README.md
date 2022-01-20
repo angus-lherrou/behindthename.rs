@@ -1,4 +1,4 @@
-# behindthename.rs
+# behindthename.rs [![Crates.io](https://img.shields.io/crates/v/behindthename)](https://crates.io/crates/behindthename)
 Rust bindings for the behindthename.com API
 
 ## Contributing
