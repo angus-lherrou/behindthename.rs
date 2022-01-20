@@ -40,7 +40,7 @@ fn test_from_str_gender() {
     match str::parse::<Gender>("ynA") {
         Ok(Any) => panic!("shouldn't be able to create Any from \"ynA\""),
         Ok(g) => panic!("{}", g),
-        Err(e) => ()
+        Err(_) => ()
     }
     match str::parse::<Gender>("Any") {
         Ok(Any) => (),

@@ -1,12 +1,11 @@
 use governor::clock::{Clock, DefaultClock};
 use governor::NotUntil;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::fmt;
-use Gender::*;
 use serde_json;
 use std::str::FromStr;
 
-#[derive(Clone, Copy, Deserialize, Debug)]
+#[derive(Clone, Copy, Deserialize, Serialize, Debug)]
 pub enum Gender {
     #[serde(rename = "m")]
     Male,
@@ -15,7 +14,9 @@ pub enum Gender {
     #[serde(rename = "u")]
     Neutral,
     #[serde(rename = "mf")]
+    #[serde(rename(deserialize = "fm"))]
     Ambiguous,
+    #[serde(rename(serialize = "" ))]
     Any
 }
 
@@ -24,27 +25,16 @@ impl FromStr for Gender {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         serde_json::from_str::<Gender>(format!("\"{}\"", s).as_str())
-            // todo: hotfix to catch `fm` for ambiguous
-            .or_else(|err| {
-                if s == "fm" {
-                    Ok(Ambiguous)
-                } else { Err(err) }
-            })
     }
 }
 
 impl fmt::Display for Gender {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let quoted = serde_json::to_string(self).unwrap();
         write!(
             f,
             "{}",
-            match *self {
-                Male => "m",
-                Female => "f",
-                Neutral => "u",
-                Ambiguous => "mf",
-                Any => "",
-            }
+            &quoted[1..quoted.len()-1]
         )
     }
 }
