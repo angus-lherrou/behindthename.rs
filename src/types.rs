@@ -24,6 +24,12 @@ impl FromStr for Gender {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         serde_json::from_str::<Gender>(format!("\"{}\"", s).as_str())
+            // todo: hotfix to catch `fm` for ambiguous
+            .or_else(|err| {
+                if s == "fm" {
+                    Ok(Ambiguous)
+                } else { Err(err) }
+            })
     }
 }
 

@@ -32,6 +32,16 @@ fn test_from_str_gender() {
         Ok(g) => panic!("{}", g),
         Err(e) => panic!("{}", e)
     }
+    match str::parse::<Gender>("fm") {
+        Ok(Ambiguous) => (),
+        Ok(g) => panic!("{}", g),
+        Err(e) => panic!("{}", e)
+    }
+    match str::parse::<Gender>("ynA") {
+        Ok(Any) => panic!("shouldn't be able to create Any from \"ynA\""),
+        Ok(g) => panic!("{}", g),
+        Err(e) => ()
+    }
     match str::parse::<Gender>("Any") {
         Ok(Any) => (),
         Ok(g) => panic!("{}", g),
