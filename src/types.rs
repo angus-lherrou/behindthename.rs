@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 use serde_json;
 use std::str::FromStr;
+use serde_json::json;
 
 #[derive(Clone, Copy, Deserialize, Serialize, Debug)]
 pub enum Gender {
@@ -24,17 +25,17 @@ impl FromStr for Gender {
     type Err = serde_json::error::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        serde_json::from_str::<Gender>(format!("\"{}\"", s).as_str())
+        serde_json::from_value::<Gender>(json!(s))
     }
 }
 
 impl fmt::Display for Gender {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let quoted = serde_json::to_string(self).unwrap();
+        let val = serde_json::to_value(self).unwrap();
         write!(
             f,
             "{}",
-            &quoted[1..quoted.len()-1]
+            val.as_str().unwrap()
         )
     }
 }
