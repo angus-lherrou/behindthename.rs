@@ -40,7 +40,7 @@ impl fmt::Display for Gender {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct NotAvailable {
     pub error_code: usize,
     pub error: String,
