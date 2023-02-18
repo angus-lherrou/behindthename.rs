@@ -6,7 +6,7 @@ use serde_json;
 use std::str::FromStr;
 use serde_json::json;
 
-#[derive(Clone, Copy, Deserialize, Serialize, Debug)]
+#[derive(Clone, Copy, Deserialize, Serialize, Debug, PartialEq, Eq, Hash)]
 pub enum Gender {
     #[serde(rename = "m")]
     Male,
@@ -46,7 +46,7 @@ pub struct NotAvailable {
     pub error: String,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Usage {
     pub usage_code: String,
     pub usage_full: String,
