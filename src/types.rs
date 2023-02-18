@@ -1,10 +1,10 @@
 use governor::clock::{Clock, DefaultClock};
 use governor::NotUntil;
 use serde::{Deserialize, Serialize};
-use std::fmt;
 use serde_json;
-use std::str::FromStr;
 use serde_json::json;
+use std::fmt;
+use std::str::FromStr;
 
 #[derive(Clone, Copy, Deserialize, Serialize, Debug, PartialEq, Eq, Hash)]
 pub enum Gender {
@@ -17,8 +17,8 @@ pub enum Gender {
     #[serde(rename = "mf")]
     #[serde(rename(deserialize = "fm"))]
     Ambiguous,
-    #[serde(rename(serialize = "" ))]
-    Any
+    #[serde(rename(serialize = ""))]
+    Any,
 }
 
 impl FromStr for Gender {
@@ -32,11 +32,7 @@ impl FromStr for Gender {
 impl fmt::Display for Gender {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let val = serde_json::to_value(self).unwrap();
-        write!(
-            f,
-            "{}",
-            val.as_str().unwrap()
-        )
+        write!(f, "{}", val.as_str().unwrap())
     }
 }
 

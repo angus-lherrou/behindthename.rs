@@ -22,7 +22,7 @@ pub fn random_with_params(
                 // This is needed because behindthename's "random" API only recognizes 'u' as the ambiguous/neutral key
                 gstring = Neutral.to_string();
                 params.push(("gender", &gstring))
-            },
+            }
             g => {
                 gstring = g.to_string();
                 params.push(("gender", &gstring))

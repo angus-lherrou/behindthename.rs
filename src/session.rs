@@ -55,10 +55,7 @@ impl Session<'_> {
         }
     }
 
-    fn request_internal(
-        &self,
-        req: impl FnOnce(&str) -> String,
-    ) -> RateLimited<'_, Response, ()> {
+    fn request_internal(&self, req: impl FnOnce(&str) -> String) -> RateLimited<'_, Response, ()> {
         match self.check() {
             Err((i, earliest)) => Governed(i, earliest),
             Ok(_) => match self.client.get(req(self.key)).send() {
@@ -86,7 +83,7 @@ impl Session<'_> {
                         },
                     },
                 }
-            },
+            }
             Failed(_) => unreachable!(), // we should never generate Limited from the internal request
             Governed(i, n) => Governed(i, n),
             ReqwestError(e) => ReqwestError(e),

@@ -133,7 +133,7 @@ fn test_json_service_unavailable() {
                 (2usize, "service not available".to_string())
             );
             println!("got NotAvailable on third request")
-        },
+        }
         Allowed(r) => match sesh.request(req_4) {
             Failed(e) => {
                 assert_eq!(
@@ -141,7 +141,7 @@ fn test_json_service_unavailable() {
                     (2usize, "service not available".to_string())
                 );
                 println!("got NotAvailable on fourth request")
-            },
+            }
             Allowed(s) => panic!("third and fourth requests succeeded: {:?}, {:?}", r, s),
             Governed(i, n) => {
                 println! {"third request: {:?}; fourth request: limiter {}, {:?}", r, i, n}

@@ -21,7 +21,7 @@ pub fn related_with_params<'a>(
                 // This is needed because behindthename's "related" API only recognizes 'mf' as the ambiguous/neutral key
                 gstring = Ambiguous.to_string();
                 params.push(("gender", &gstring))
-            },
+            }
             g => {
                 gstring = g.to_string();
                 params.push(("gender", &gstring))
