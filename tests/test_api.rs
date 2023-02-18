@@ -73,9 +73,9 @@ fn test_json_lookup() {
         Allowed(JsonResponse::NameList(e)) => {
             panic!("request parsed as name list: {:?}", e)
         }
-        Limited(_) => panic!("first request failed: limited by API"),
+        Failed(_) => panic!("first request failed: limited by API"),
         Governed(i, n) => panic!("request failed: limiter {}, {:?}", i, n),
-        Error(e) => panic!("request failed: {:?}", e),
+        ReqwestError(e) => panic!("request failed: {:?}", e),
     };
 
     sleep(Duration::from_secs(2));
@@ -94,9 +94,9 @@ fn test_json_random() {
         Allowed(JsonResponse::NameDetails(e)) => {
             panic!("request parsed as name details: {:?}", e)
         }
-        Limited(_) => panic!("first request failed: limited by API"),
+        Failed(_) => panic!("first request failed: limited by API"),
         Governed(i, n) => panic!("request failed: limiter {}, {:?}", i, n),
-        Error(e) => panic!("request failed: {:?}", e),
+        ReqwestError(e) => panic!("request failed: {:?}", e),
     };
 
     sleep(Duration::from_secs(2));
@@ -116,18 +116,18 @@ fn test_json_service_unavailable() {
     match sesh.request(req_1) {
         Allowed(r) => println!("first request: {:?}", r),
         Governed(i, n) => panic!("first request failed: limiter {}, {:?}", i, n),
-        Limited(_) => panic!("first request failed: limited by API"),
-        Error(e) => panic!("first request failed: {:?}", e),
+        Failed(_) => panic!("first request failed: limited by API"),
+        ReqwestError(e) => panic!("first request failed: {:?}", e),
     };
     match sesh.request(req_2) {
         Allowed(r) => println!("second request: {:?}", r),
         Governed(i, n) => panic!("second request failed: limiter {}, {:?}", i, n),
-        Limited(_) => panic!("second request failed: limited by API"),
-        Error(e) => panic!("second request failed: {:?}", e),
+        Failed(_) => panic!("second request failed: limited by API"),
+        ReqwestError(e) => panic!("second request failed: {:?}", e),
     };
     // whether third or fourth request is the one that fails is up to chance
     match sesh.request(req_3) {
-        Limited(e) => {
+        Failed(e) => {
             assert_eq!(
                 (e.error_code, e.error),
                 (2usize, "service not available".to_string())
@@ -135,7 +135,7 @@ fn test_json_service_unavailable() {
             println!("got NotAvailable on third request")
         },
         Allowed(r) => match sesh.request(req_4) {
-            Limited(e) => {
+            Failed(e) => {
                 assert_eq!(
                     (e.error_code, e.error),
                     (2usize, "service not available".to_string())
@@ -146,10 +146,10 @@ fn test_json_service_unavailable() {
             Governed(i, n) => {
                 println! {"third request: {:?}; fourth request: limiter {}, {:?}", r, i, n}
             }
-            Error(e) => panic!("fourth request failed: {:?}", e),
+            ReqwestError(e) => panic!("fourth request failed: {:?}", e),
         },
         Governed(i, n) => println! {"third request: limiter {}, {:?}", i, n},
-        Error(e) => panic!("third request failed: {:?}", e),
+        ReqwestError(e) => panic!("third request failed: {:?}", e),
     };
 
     sleep(Duration::from_secs(2));

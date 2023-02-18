@@ -41,7 +41,7 @@ impl fmt::Display for Gender {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct NotAvailable {
+pub struct RemoteError {
     pub error_code: usize,
     pub error: String,
 }
@@ -76,9 +76,9 @@ pub enum JsonResponse {
 
 pub(crate) type DefaultInstant = <DefaultClock as Clock>::Instant;
 
-pub enum RateLimited<'a, S, T, E> {
+pub enum RateLimited<'a, S, E> {
     Allowed(S),
     Governed(&'static str, NotUntil<'a, DefaultInstant>),
-    Limited(T),
-    Error(E),
+    Failed(E),
+    ReqwestError(reqwest::Error),
 }

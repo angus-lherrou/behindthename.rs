@@ -58,11 +58,11 @@ impl Session<'_> {
     fn request_internal(
         &self,
         req: impl FnOnce(&str) -> String,
-    ) -> RateLimited<'_, Response, (), reqwest::Error> {
+    ) -> RateLimited<'_, Response, ()> {
         match self.check() {
             Err((i, earliest)) => Governed(i, earliest),
             Ok(_) => match self.client.get(req(self.key)).send() {
-                Err(e) => Error(e),
+                Err(e) => ReqwestError(e),
                 Ok(resp) => Allowed(resp),
             },
         }
@@ -71,7 +71,7 @@ impl Session<'_> {
     pub fn request(
         &self,
         req: impl FnOnce(&str) -> String,
-    ) -> RateLimited<'_, JsonResponse, NotAvailable, reqwest::Error> {
+    ) -> RateLimited<'_, JsonResponse, RemoteError> {
         match self.request_internal(req) {
             Allowed(resp) => {
                 let text = resp.text().unwrap();
@@ -80,16 +80,16 @@ impl Session<'_> {
                     Ok(jnd) => Allowed(JsonResponse::NameDetails(jnd)),
                     Err(_) => match from_str::<JsonNameList>(text_str) {
                         Ok(jnl) => Allowed(JsonResponse::NameList(jnl)),
-                        Err(_) => match from_str::<NotAvailable>(text_str) {
-                            Ok(e) => Limited(e),
+                        Err(_) => match from_str::<RemoteError>(text_str) {
+                            Ok(e) => Failed(e),
                             Err(_) => panic!("Failed to parse {:?} with any branch", text_str),
                         },
                     },
                 }
             },
-            Limited(_) => unreachable!(), // we should never generate Limited from the internal request
+            Failed(_) => unreachable!(), // we should never generate Limited from the internal request
             Governed(i, n) => Governed(i, n),
-            Error(e) => Error(e),
+            ReqwestError(e) => ReqwestError(e),
         }
     }
 }
